@@ -7,6 +7,8 @@ import org.hibernate.annotations.Type;
 import pl.calharad.securetalk.security.PasswordEncoder;
 
 import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -32,6 +34,14 @@ public class User {
     @Type(type = "org.hibernate.type.BinaryType")
     @Setter(AccessLevel.NONE)
     private byte[] salt;
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "conversation_member",
+            joinColumns = @JoinColumn(name = "user_id", nullable = false),
+            inverseJoinColumns = @JoinColumn(name = "conversation_id", nullable = false)
+    )
+    private Set<Conversation> conversations = new HashSet<>();
 
     public void setPassword(String password, PasswordEncoder encoder) {
         this.salt = encoder.generateSalt();
