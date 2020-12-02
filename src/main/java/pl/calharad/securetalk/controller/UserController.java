@@ -10,7 +10,6 @@ import pl.calharad.securetalk.entity.User;
 import pl.calharad.securetalk.service.UserService;
 
 import javax.annotation.security.PermitAll;
-import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
 import javax.validation.Valid;
 import javax.ws.rs.*;
