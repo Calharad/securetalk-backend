@@ -1,0 +1,34 @@
+package pl.calharad.securetalk.dao;
+
+import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityNotFoundException;
+import java.util.Optional;
+
+public abstract class BaseDao <T, ID> {
+
+    @Inject
+    protected EntityManager em;
+
+    public T getOne(ID id) throws EntityNotFoundException {
+        Optional<T> entity = findById(id);
+        if(entity.isEmpty()) {
+            throw new EntityNotFoundException(String.format("Entity %s not found", getType().getSimpleName()));
+        }
+        return entity.get();
+    }
+
+    public Optional<T> findById(ID id) {
+        return Optional.ofNullable(em.find(getType(), id));
+    }
+    public void saveAll(Iterable<T> obj) {
+        obj.forEach(this::save);
+    }
+
+    public void delete(T obj) {
+        em.remove(obj);
+    }
+
+    public abstract void save(T obj);
+    protected abstract Class<T> getType();
+}

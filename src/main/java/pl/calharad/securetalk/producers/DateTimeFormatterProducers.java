@@ -1,4 +1,4 @@
-package pl.calharad.securetalk.utils;
+package pl.calharad.securetalk.producers;
 
 import javax.enterprise.context.Dependent;
 import javax.enterprise.inject.Produces;

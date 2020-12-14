@@ -27,6 +27,7 @@ public class Message {
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "conversation_id", updatable = false, nullable = false)
+    @Setter(AccessLevel.MODULE)
     private Conversation conversation;
 
     @Override

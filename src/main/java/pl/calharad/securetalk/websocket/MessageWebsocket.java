@@ -4,22 +4,19 @@ import io.quarkus.security.Authenticated;
 import pl.calharad.securetalk.dao.UserDao;
 import pl.calharad.securetalk.entity.User;
 import pl.calharad.securetalk.websocket.data.WebsocketMessage;
+import pl.calharad.securetalk.websocket.data.output.Encodable;
+import pl.calharad.securetalk.websocket.data.output.MessageResponseTO;
 
-import javax.annotation.Resource;
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.event.Observes;
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.websocket.*;
 import javax.websocket.server.ServerEndpoint;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.SecurityContext;
-import java.security.Principal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 @ApplicationScoped
 @ServerEndpoint(
@@ -31,7 +28,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class MessageWebsocket {
 
     private static final Map<Integer, List<Session>> userSessions = new ConcurrentHashMap<>();
-    private static final Map<Integer, List<Integer>> conversationUsers = new ConcurrentHashMap<>();
+    private static final Map<Long, List<Integer>> conversationUsers = new ConcurrentHashMap<>();
 
     @Inject
     UserDao userDao;
@@ -39,6 +36,38 @@ public class MessageWebsocket {
     @Inject
     @Any
     Instance<WebsocketHandler> handlerInstance;
+
+    void sendMessageToUsers(Encodable message, List<Integer> users) {
+        List<Session> sessions = users.stream()
+                .map(u -> userSessions.getOrDefault(u, List.of()))
+                .flatMap(Collection::stream)
+                .collect(Collectors.toList());
+        sendMessage(message, sessions);
+    }
+
+    void sendMessage(Encodable message, List<Session> sessions) {
+        for(Session session: sessions) {
+            session.getAsyncRemote().sendObject(message);
+        }
+    }
+
+    public void sendMessageToUser(Encodable message, Integer user) {
+        List<Session> sessions = userSessions.getOrDefault(user, List.of());
+        sendMessage(message, sessions);
+    }
+
+    void sendMessageToConversation(Encodable message, Long conversation) {
+        List<Session> sessions = conversationUsers.getOrDefault(conversation, List.of())
+                .stream().map(userSessions::get)
+                .filter(Objects::nonNull)
+                .flatMap(Collection::stream)
+                .collect(Collectors.toList());
+        sendMessage(message, sessions);
+    }
+
+    void onNewMessage(@Observes MessageResponseTO response) {
+        sendMessageToConversation(response, response.getConversationId());
+    }
 
     @OnOpen
     public void onOpen(Session session) throws Exception {

@@ -1,7 +1,6 @@
 package pl.calharad.securetalk.exception.mapper;
 
 import pl.calharad.securetalk.base.ExceptionTO;
-import pl.calharad.securetalk.base.ResponseTO;
 
 import javax.annotation.Priority;
 import javax.persistence.EntityExistsException;
@@ -15,10 +14,8 @@ public class EntityExistsExceptionMapper implements ExceptionMapper<EntityExists
     @Override
     public Response toResponse(EntityExistsException e) {
         return Response.status(Response.Status.CONFLICT)
-                .entity(ResponseTO.builder()
-                        .success(false)
-                        .exception(new ExceptionTO(e.getMessage()))
-                        .build()
+                .entity(
+                        new ExceptionTO("Server error")
                 ).build();
     }
 }

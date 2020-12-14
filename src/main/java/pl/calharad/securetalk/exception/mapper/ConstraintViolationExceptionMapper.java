@@ -1,7 +1,6 @@
 package pl.calharad.securetalk.exception.mapper;
 
 import pl.calharad.securetalk.base.ExceptionTO;
-import pl.calharad.securetalk.base.ResponseTO;
 
 import javax.annotation.Priority;
 import javax.validation.ConstraintViolationException;
@@ -16,10 +15,7 @@ public class ConstraintViolationExceptionMapper implements ExceptionMapper<Const
     public Response toResponse(ConstraintViolationException e) {
         return Response.status(Response.Status.BAD_REQUEST)
                 .entity(
-                        ResponseTO.builder()
-                                .success(false)
-                                .exception(new ExceptionTO("Incorrect data"))
-                        .build()
+                        new ExceptionTO("Server error")
                 )
                 .build();
     }

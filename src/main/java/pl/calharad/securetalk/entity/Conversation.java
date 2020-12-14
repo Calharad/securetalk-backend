@@ -36,10 +36,22 @@ public class Conversation {
             joinColumns = @JoinColumn(name = "conversation_id", nullable = false),
             inverseJoinColumns = @JoinColumn(name = "user_id", nullable = false)
     )
+    @Setter(AccessLevel.PRIVATE)
     private Set<User> members = new HashSet<>();
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "conversation")
+    @Setter(AccessLevel.PRIVATE)
     private Set<Message> messages;
+
+    public void addMember(User user) {
+        this.members.add(user);
+        user.getConversations().add(this);
+    }
+
+    public void addMessage(Message message) {
+        message.setConversation(this);
+        getMessages().add(message);
+    }
 
     @Override
     public boolean equals(Object o) {

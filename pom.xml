@@ -52,7 +52,6 @@
         <dependency>
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-flyway-deployment</artifactId>
-            <version>1.9.1.Final</version>
         </dependency>
         <dependency>
             <groupId>io.quarkus</groupId>

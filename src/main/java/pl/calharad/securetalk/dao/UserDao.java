@@ -12,9 +12,7 @@ import java.util.Optional;
 
 @RequestScoped
 @Transactional
-public class UserDao {
-    @Inject
-    EntityManager em;
+public class UserDao extends BaseDao<User, Integer> {
 
     public Optional<User> getUserByUsername(String username) {
         JPAQueryFactory qf = new JPAQueryFactory(em);
@@ -24,5 +22,19 @@ public class UserDao {
                         .where(qUser.username.eq(username))
                         .fetchOne()
         );
+    }
+
+    @Override
+    public void save(User obj) {
+        if(obj.getId() == null) {
+            em.persist(obj);
+        } else {
+            em.merge(obj);
+        }
+    }
+
+    @Override
+    protected Class<User> getType() {
+        return User.class;
     }
 }

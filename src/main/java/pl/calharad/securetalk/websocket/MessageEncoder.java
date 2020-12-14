@@ -4,17 +4,18 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
 import pl.calharad.securetalk.websocket.data.WebsocketMessage;
+import pl.calharad.securetalk.websocket.data.output.Encodable;
 
 import javax.websocket.EncodeException;
 import javax.websocket.Encoder;
 import javax.websocket.EndpointConfig;
 
-public class MessageEncoder implements Encoder.Text<WebsocketMessage> {
+public class MessageEncoder implements Encoder.Text<Encodable> {
 
-    private final ObjectMapper mapper = new ObjectMapper();
+    private final ObjectMapper mapper = new ObjectMapper().findAndRegisterModules();
 
     @Override
-    public String encode(WebsocketMessage o) throws EncodeException {
+    public String encode(Encodable o) throws EncodeException {
         try {
             return mapper.writeValueAsString(o);
         } catch (JsonProcessingException e) {

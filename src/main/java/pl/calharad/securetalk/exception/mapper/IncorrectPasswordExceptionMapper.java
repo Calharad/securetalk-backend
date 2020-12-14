@@ -1,7 +1,6 @@
 package pl.calharad.securetalk.exception.mapper;
 
 import pl.calharad.securetalk.base.ExceptionTO;
-import pl.calharad.securetalk.base.ResponseTO;
 import pl.calharad.securetalk.exception.IncorrectPasswordException;
 
 import javax.annotation.Priority;
@@ -15,10 +14,8 @@ public class IncorrectPasswordExceptionMapper implements ExceptionMapper<Incorre
     @Override
     public Response toResponse(IncorrectPasswordException e) {
         return Response.status(Response.Status.UNAUTHORIZED)
-                .entity(ResponseTO.builder()
-                        .success(false)
-                        .exception(new ExceptionTO(e.getMessage()))
-                        .build()
+                .entity(
+                        new ExceptionTO("Server error")
                 ).build();
     }
 }

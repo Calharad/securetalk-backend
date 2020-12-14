@@ -8,6 +8,7 @@ import pl.calharad.securetalk.security.PasswordEncoder;
 
 import javax.persistence.*;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 @Getter
@@ -41,10 +42,13 @@ public class User {
             joinColumns = @JoinColumn(name = "user_id", nullable = false),
             inverseJoinColumns = @JoinColumn(name = "conversation_id", nullable = false)
     )
+    @Setter(AccessLevel.MODULE)
     private Set<Conversation> conversations = new HashSet<>();
 
     public void setPassword(String password, PasswordEncoder encoder) {
-        this.salt = encoder.generateSalt();
+        if(Objects.isNull(this.salt)) {
+            this.salt = encoder.generateSalt();
+        }
         this.password = encoder.encode(password, this.salt);
     }
 

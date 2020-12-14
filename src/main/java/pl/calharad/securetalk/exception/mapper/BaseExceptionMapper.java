@@ -3,7 +3,6 @@ package pl.calharad.securetalk.exception.mapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pl.calharad.securetalk.base.ExceptionTO;
-import pl.calharad.securetalk.base.ResponseTO;
 
 import javax.annotation.Priority;
 import javax.ws.rs.core.Response;
@@ -21,10 +20,7 @@ public class BaseExceptionMapper implements ExceptionMapper<Exception> {
         LOG.error("Nieobsługiwany wyjątek", e);
         return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                 .entity(
-                        ResponseTO.builder()
-                                .success(false)
-                                .exception(new ExceptionTO("Server error"))
-                        .build()
+                        new ExceptionTO("Server error")
                 )
                 .build();
     }

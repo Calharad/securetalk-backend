@@ -10,7 +10,7 @@ import javax.websocket.Decoder;
 import javax.websocket.EndpointConfig;
 
 public class MessageDecoder implements Decoder.Text<WebsocketMessage> {
-    private final ObjectMapper mapper = new ObjectMapper();
+    private final ObjectMapper mapper = new ObjectMapper().findAndRegisterModules();
 
     @Override
     public WebsocketMessage decode(String s) throws DecodeException {
