@@ -1,6 +1,7 @@
 package pl.calharad.securetalk.websocket;
 
 import io.quarkus.security.Authenticated;
+import pl.calharad.securetalk.base.ExceptionTO;
 import pl.calharad.securetalk.dao.UserDao;
 import pl.calharad.securetalk.entity.User;
 import pl.calharad.securetalk.websocket.data.WebsocketMessage;
@@ -57,12 +58,7 @@ public class MessageWebsocket {
     }
 
     void sendMessageToConversation(Encodable message, Long conversation) {
-        List<Session> sessions = conversationUsers.getOrDefault(conversation, List.of())
-                .stream().map(userSessions::get)
-                .filter(Objects::nonNull)
-                .flatMap(Collection::stream)
-                .collect(Collectors.toList());
-        sendMessage(message, sessions);
+        sendMessageToUsers(message, conversationUsers.getOrDefault(conversation, List.of()));
     }
 
     void onNewMessage(@Observes MessageResponseTO response) {
@@ -87,9 +83,8 @@ public class MessageWebsocket {
     }
 
     @OnError
-    public void onError(Session session) throws Exception {
-        User user = getUserOrThrow(session);
-        userSessions.getOrDefault(user.getId(), new ArrayList<>()).remove(session);
+    public void onError(Session session, Throwable exc) {
+        session.getAsyncRemote().sendObject(exc.getMessage());
     }
 
     @OnClose
