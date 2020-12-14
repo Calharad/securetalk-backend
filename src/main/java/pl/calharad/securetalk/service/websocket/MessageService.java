@@ -1,4 +1,4 @@
-package pl.calharad.securetalk.service;
+package pl.calharad.securetalk.service.websocket;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import pl.calharad.securetalk.dao.ConversationDao;
@@ -17,7 +17,6 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Event;
 import javax.enterprise.inject.Any;
 import javax.inject.Inject;
-import javax.transaction.Transactional;
 
 @ApplicationScoped
 @WebsocketMethod(WebsocketCommand.NEW_MESSAGE)
