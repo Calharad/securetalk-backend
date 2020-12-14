@@ -7,24 +7,29 @@ import pl.calharad.securetalk.entity.User;
 import pl.calharad.securetalk.exception.IncorrectPasswordException;
 import pl.calharad.securetalk.security.PasswordEncoder;
 
-import javax.enterprise.context.RequestScoped;
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityExistsException;
-import javax.persistence.EntityManager;
 import javax.persistence.EntityNotFoundException;
-import javax.transaction.Transactional;
+import java.security.Principal;
 import java.util.Optional;
 
-@RequestScoped
+@ApplicationScoped
 public class UserService {
-    @Inject
-    EntityManager em;
     @Inject
     PasswordEncoder encoder;
     @Inject
     UserDao userDao;
 
-    @Transactional
+    public User getUserFromPrincipal(Principal principal) {
+        String username = principal.getName();
+        Optional<User> user = userDao.getUserByUsername(username);
+        if (user.isEmpty()) {
+            throw new EntityNotFoundException(String.format("User with username %s does not exist", username));
+        }
+        return user.get();
+    }
+
     public void register(RegisterUserTO newUser) {
         Optional<User> existingUser = userDao.getUserByUsername(newUser.getUsername());
         if(existingUser.isPresent()) {
@@ -33,10 +38,9 @@ public class UserService {
         User user = new User();
         user.setPassword(newUser.getPassword(), encoder);
         user.setUsername(newUser.getUsername());
-        em.persist(user);
+        userDao.save(user);
     }
 
-    @Transactional
     public User loginUser(LoginUserTO user) {
         User dbUser = userDao.getUserByUsername(user.getUsername()).orElseThrow(() -> new EntityNotFoundException("User not found"));
         boolean loggedIn = encoder.equals(user.getPassword(), dbUser.getPassword(), dbUser.getSalt());

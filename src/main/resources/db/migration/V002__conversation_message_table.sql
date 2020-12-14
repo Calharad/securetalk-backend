@@ -1,6 +1,6 @@
 create table conversations (
     id bigserial primary key unique not null,
-    conversation_name varchar(255) not null,
+    conversation_name varchar(255),
     creator_id int4 not null references users(id),
     owner_id int4 not null references users(id)
 );

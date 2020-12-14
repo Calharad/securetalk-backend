@@ -1,12 +1,11 @@
 package pl.calharad.securetalk.dao;
 
+import com.querydsl.core.types.dsl.EntityPathBase;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import pl.calharad.securetalk.entity.QUser;
 import pl.calharad.securetalk.entity.User;
 
 import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
-import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 import java.util.Optional;
 
@@ -36,5 +35,10 @@ public class UserDao extends BaseDao<User, Integer> {
     @Override
     protected Class<User> getType() {
         return User.class;
+    }
+
+    @Override
+    protected EntityPathBase<User> getEntity() {
+        return QUser.user;
     }
 }

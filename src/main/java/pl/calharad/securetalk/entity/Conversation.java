@@ -3,9 +3,11 @@ package pl.calharad.securetalk.entity;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.JoinFormula;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
+import java.time.OffsetDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -42,6 +44,8 @@ public class Conversation {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "conversation")
     @Setter(AccessLevel.PRIVATE)
     private Set<Message> messages;
+
+    private OffsetDateTime updateDate;
 
     public void addMember(User user) {
         this.members.add(user);

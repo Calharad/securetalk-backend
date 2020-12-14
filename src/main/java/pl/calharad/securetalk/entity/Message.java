@@ -17,8 +17,10 @@ public class Message {
     @Setter(AccessLevel.NONE)
     private Long id;
 
+    @Column(nullable = false)
     private String content;
 
+    @Column(nullable = false)
     private OffsetDateTime messageDate;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
@@ -29,6 +31,11 @@ public class Message {
     @JoinColumn(name = "conversation_id", updatable = false, nullable = false)
     @Setter(AccessLevel.MODULE)
     private Conversation conversation;
+
+    @PrePersist
+    void updateState() {
+        conversation.setUpdateDate(messageDate);
+    }
 
     @Override
     public boolean equals(Object o) {

@@ -1,6 +1,8 @@
 package pl.calharad.securetalk.dao;
 
+import com.querydsl.core.types.dsl.EntityPathBase;
 import pl.calharad.securetalk.entity.Message;
+import pl.calharad.securetalk.entity.QMessage;
 
 import javax.enterprise.context.RequestScoped;
 import javax.transaction.Transactional;
@@ -21,5 +23,10 @@ public class MessageDao extends BaseDao<Message, Long> {
     @Override
     protected Class<Message> getType() {
         return Message.class;
+    }
+
+    @Override
+    protected EntityPathBase<Message> getEntity() {
+        return QMessage.message;
     }
 }
