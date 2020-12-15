@@ -2,6 +2,7 @@ package pl.calharad.securetalk.service;
 
 import pl.calharad.securetalk.dao.ConversationDao;
 import pl.calharad.securetalk.dto.conversation.ConversationTO;
+import pl.calharad.securetalk.dto.conversation.UserConversationTO;
 import pl.calharad.securetalk.entity.Conversation;
 import pl.calharad.securetalk.entity.User;
 import pl.calharad.securetalk.utils.page.Page;
@@ -34,6 +35,7 @@ public class ConversationService {
             dto.setConversationName(conv.getConversationName());
         }
         dto.setUpdateDate(conv.getUpdateDate());
+        dto.setMembers(conv.getMembers().stream().map(UserConversationTO::new).collect(Collectors.toList()));
         return dto;
     }
 }

@@ -20,12 +20,12 @@ public class ConversationDao extends BaseDao<Conversation, Long> {
     public Page<Conversation> getLatestConversationsPageForUser(User user, PageParams params) {
 
         QConversation qConversation = QConversation.conversation;
-        List<Conversation> conversations = getLatestConversationsPageQuery()
+        List<Conversation> conversations = getLatestConversationsPageQuery(user)
                 .orderBy(qConversation.updateDate.desc())
                 .offset(params.getPage()).limit(params.getSize())
                 .fetch();
 
-        long count = getLatestConversationsPageQuery()
+        long count = getLatestConversationsPageQuery(user)
                 .fetchCount();
         long pages = (count - 1) / params.getSize() + 1;
 
@@ -38,9 +38,10 @@ public class ConversationDao extends BaseDao<Conversation, Long> {
                 .build();
     }
 
-    private JPAQuery<Conversation> getLatestConversationsPageQuery() {
+    private JPAQuery<Conversation> getLatestConversationsPageQuery(User user) {
         JPAQueryFactory qf = new JPAQueryFactory(em);
-        return qf.selectFrom(QConversation.conversation);
+        QConversation conversation = QConversation.conversation;
+        return qf.selectFrom(conversation).where(conversation.members.contains(user));
     }
 
     @Override
