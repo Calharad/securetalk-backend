@@ -40,6 +40,16 @@ public abstract class BaseDao <T, ID> {
         return qf.selectFrom(entity).fetchCount();
     }
 
+    public void flushSaveAll(Iterable<T> obj) {
+        saveAll(obj);
+        em.flush();
+    }
+
+    public void flushSave(T obj) {
+        save(obj);
+        em.flush();
+    }
+
     public abstract void save(T obj);
     protected abstract Class<T> getType();
     protected abstract EntityPathBase<T> getEntity();

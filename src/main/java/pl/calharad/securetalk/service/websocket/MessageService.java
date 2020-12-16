@@ -46,6 +46,6 @@ public class MessageService implements WebsocketHandler {
         mess.setMessageDate(message.getTimestamp());
         conv.addMessage(mess);
         messageDao.save(mess);
-        messageEvent.fire(new MessageResponseTO(mess));
+        messageEvent.fireAsync(new MessageResponseTO(mess));
     }
 }

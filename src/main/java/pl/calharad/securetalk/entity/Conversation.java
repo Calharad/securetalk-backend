@@ -3,10 +3,9 @@ package pl.calharad.securetalk.entity;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.JoinFormula;
 
 import javax.persistence.*;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.Max;
 import java.time.OffsetDateTime;
 import java.util.HashSet;
 import java.util.Set;
@@ -21,7 +20,7 @@ public class Conversation {
     @Setter(AccessLevel.NONE)
     private Long id;
 
-    @Size(min = 1, max = 256)
+    @Max(256)
     private String conversationName;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)

@@ -3,11 +3,13 @@ package pl.calharad.securetalk.websocket;
 import io.quarkus.security.Authenticated;
 import pl.calharad.securetalk.base.ExceptionTO;
 import pl.calharad.securetalk.dao.UserDao;
+import pl.calharad.securetalk.dto.conversation.UserConversationTO;
 import pl.calharad.securetalk.entity.User;
 import pl.calharad.securetalk.exception.ApplicationException;
 import pl.calharad.securetalk.websocket.data.WebsocketMessage;
 import pl.calharad.securetalk.websocket.data.output.Encodable;
 import pl.calharad.securetalk.websocket.data.output.MessageResponseTO;
+import pl.calharad.securetalk.websocket.data.output.NewConversationResponseTO;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Observes;
@@ -62,6 +64,13 @@ public class MessageWebsocket {
 
     void sendMessageToConversation(Encodable message, Long conversation) {
         sendMessageToUsers(message, conversationUsers.getOrDefault(conversation, List.of()));
+    }
+
+    void onNewConversation(@Observes NewConversationResponseTO conv) {
+        List<Integer> users = conv.getMembers().stream()
+                .map(UserConversationTO::getId).collect(Collectors.toList());
+        conversationUsers.put(conv.getId(), users);
+        sendMessageToUsers(conv, users);
     }
 
     void onNewMessage(@Observes MessageResponseTO response) {
