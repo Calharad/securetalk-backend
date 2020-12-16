@@ -4,6 +4,7 @@ import io.quarkus.security.Authenticated;
 import pl.calharad.securetalk.base.ExceptionTO;
 import pl.calharad.securetalk.dao.UserDao;
 import pl.calharad.securetalk.entity.User;
+import pl.calharad.securetalk.exception.ApplicationException;
 import pl.calharad.securetalk.websocket.data.WebsocketMessage;
 import pl.calharad.securetalk.websocket.data.output.Encodable;
 import pl.calharad.securetalk.websocket.data.output.MessageResponseTO;
@@ -13,6 +14,8 @@ import javax.enterprise.event.Observes;
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
+import javax.persistence.EntityExistsException;
+import javax.persistence.EntityNotFoundException;
 import javax.websocket.*;
 import javax.websocket.server.ServerEndpoint;
 import java.util.*;
@@ -84,7 +87,17 @@ public class MessageWebsocket {
 
     @OnError
     public void onError(Session session, Throwable exc) {
-        session.getAsyncRemote().sendObject(exc.getMessage());
+        String message = "Server error";
+        if(exc instanceof ApplicationException) {
+            message = exc.getMessage();
+        }
+        else if (exc instanceof EntityExistsException) {
+            message = exc.getMessage();
+        }
+        else if (exc instanceof EntityNotFoundException) {
+            message = exc.getMessage();
+        }
+        session.getAsyncRemote().sendObject(new ExceptionTO(message));
     }
 
     @OnClose

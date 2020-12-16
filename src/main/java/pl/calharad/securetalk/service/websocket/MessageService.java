@@ -6,6 +6,7 @@ import pl.calharad.securetalk.dao.MessageDao;
 import pl.calharad.securetalk.entity.Conversation;
 import pl.calharad.securetalk.entity.Message;
 import pl.calharad.securetalk.entity.User;
+import pl.calharad.securetalk.exception.ApplicationException;
 import pl.calharad.securetalk.websocket.WebsocketHandler;
 import pl.calharad.securetalk.websocket.WebsocketMethod;
 import pl.calharad.securetalk.websocket.data.WebsocketCommand;
@@ -36,6 +37,9 @@ public class MessageService implements WebsocketHandler {
     public void handle(WebsocketMessage message, User user) {
         NewMessageTO newMessage = mapper.convertValue(message.getData(), NewMessageTO.class);
         Conversation conv = conversationDao.getOne(newMessage.getConversationId());
+        if(!conversationDao.isConversationMember(conv, user)) {
+            throw new ApplicationException("User is not in conversation");
+        }
         Message mess = new Message();
         mess.setContent(newMessage.getMessage());
         mess.setCreator(user);

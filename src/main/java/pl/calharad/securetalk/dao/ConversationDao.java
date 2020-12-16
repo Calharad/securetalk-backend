@@ -44,6 +44,17 @@ public class ConversationDao extends BaseDao<Conversation, Long> {
         return qf.selectFrom(conversation).where(conversation.members.contains(user));
     }
 
+    public boolean isConversationMember(Conversation conv, User user) {
+        JPAQueryFactory qf = new JPAQueryFactory(em);
+        QConversation conversation = QConversation.conversation;
+        return qf.selectOne().from(conversation)
+                .where(
+                        conversation.eq(conv),
+                        conversation.members.contains(user)
+                )
+                .fetchCount() > 0;
+    }
+
     @Override
     public void save(Conversation obj) {
         if (obj.getId() == null) {
